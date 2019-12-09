@@ -1,0 +1,32 @@
+{
+  "name": "online-shopping-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node dist/app.js",
+    "dev": "nodemon src/app.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LukaQantariaa/online-shopping-backend.git"
+  },
+  "author": "Luka Qantaria",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LukaQantariaa/online-shopping-backend/issues"
+  },
+  "homepage": "https://github.com/LukaQantariaa/online-shopping-backend#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^12.12.15",
+    "nodemon": "^2.0.1",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3"
+  }
+}
