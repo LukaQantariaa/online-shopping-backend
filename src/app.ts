@@ -1,5 +1,10 @@
 import express, {Application} from "express";
 import dotenv from 'dotenv'
+import { RegistrableController } from './controllers/Registerable.controller'
+import container from './config/inersify.config';
+import TYPES from './types/types'
+
+import { apiErrorHandler } from './shared/error-handler/handler'
 
 class App {
 
@@ -16,8 +21,9 @@ class App {
         dotenv.config();
     }
 
-    routes() {
-
+    routes() {  // grabs the Controller from IoC container and registers all the endpoints
+        const controllers: RegistrableController[] = container.getAll<RegistrableController>(TYPES.Controller);
+        controllers.forEach(controller => controller.register(this.app));
     }
 
     start() {
@@ -27,7 +33,7 @@ class App {
     }
 
     errorHandler(){
-        
+        this.app.use(apiErrorHandler)
     }
 }
 
