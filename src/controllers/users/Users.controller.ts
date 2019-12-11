@@ -1,8 +1,10 @@
 import * as express from 'express';
 import {injectable, inject} from 'inversify';
+
 import TYPES from '../../types/types';
 import {UsersService} from '../../services/users/Users.service';
 import {RegistrableController} from '../Registerable.controller';
+import { userSchema } from '../../validators/user/user'
 
 @injectable()
 export class UsersController implements RegistrableController {
@@ -13,8 +15,8 @@ export class UsersController implements RegistrableController {
     }
 
     public register(app: express.Application): void {
-        // GET all users
         app.route('/users')
+        // GET all users
             .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const users = await this.UsersService.getUsers().catch(err => {
@@ -25,5 +27,31 @@ export class UsersController implements RegistrableController {
                     next(err)
                 }
             })
+        // Register user
+            .post(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    // request params
+                    const user = {
+                        username: req.body.username,
+                        email: req.body.email,
+                        password: req.body.password,
+                        is_active: true
+                    }
+
+                    // validate
+                    const validate = userSchema.validate(user)
+                    if(validate.error) {
+                        const err = validate.error.details[0].message; 
+                        throw({type: "USER_CONTROLLER_ERROR", value: err, statusCode: 400})
+                    }
+
+                    // register user
+                    const registerUser = await this.UsersService.registerUser(user)
+                    res.send(registerUser)
+                } catch(err) {
+                    next(err)
+                }
+            })
+
     }
 }

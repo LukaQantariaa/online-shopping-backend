@@ -33,7 +33,7 @@ class App {
         this.app.use(fileUpload.default())
         db.authenticate()
             .then( ()=>{ console.log("Database connected!") } )
-            .catch(() => { console.log('err') })
+            .catch(() => { console.log('Database error') })
     }
 
     routes() {  // grabs the Controller from IoC container and registers all the endpoints
