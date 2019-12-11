@@ -1,22 +1,15 @@
 import {injectable} from 'inversify';
 
+import { User } from '../../models/user/user.model'
+
 
 export interface UsersRepository {
-    findAll(): Promise<Array<{name: string; surname: string}>>;
+    findAll(): Promise<User[]>;
 }
 
 @injectable()
 export class UsersRepositoryImp implements UsersRepository {
-    public findAll(): Promise<Array<{name: string, surname: string}>> {
-
-        // Fake data
-        return new Promise( (reslove, reject) => {
-            setTimeout(() => {
-                reslove([
-                    {name: 'John', surname: "Doe"}, 
-                    {name: "John2", surname: "Doe2"}
-                ]);  
-            }, 3000);
-        })
+    public findAll(): Promise<User[]> {
+        return User.findAll({where: {is_active: true}})
     }
 }

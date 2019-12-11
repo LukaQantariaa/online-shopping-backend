@@ -1,10 +1,15 @@
 import express, {Application} from "express";
 import dotenv from 'dotenv'
-import { RegistrableController } from './controllers/Registerable.controller'
+import morgan from "morgan"
+import * as bodyParser from 'body-parser'
+import * as fileUpload from 'express-fileupload'
+
 import container from './config/inersify.config';
 import TYPES from './types/types'
 
+import { RegistrableController } from './controllers/Registerable.controller'
 import { apiErrorHandler } from './shared/error-handler/handler'
+import { db } from './config/database'
 
 class App {
 
@@ -19,6 +24,16 @@ class App {
 
     config() {
         dotenv.config();
+        console.log(db)
+        console.log(process.env.DB_NAME)
+        console.log(typeof process.env.DB_NAME)
+        this.app.use(morgan('dev'));
+        this.app.use(bodyParser.urlencoded({ extended: false }))
+        this.app.use(bodyParser.json())
+        this.app.use(fileUpload.default())
+        db.authenticate()
+            .then( ()=>{ console.log("Database connected!") } )
+            .catch(() => { console.log('err') })
     }
 
     routes() {  // grabs the Controller from IoC container and registers all the endpoints
@@ -27,8 +42,8 @@ class App {
     }
 
     start() {
-        this.app.listen(process.env.port || 4000, ()=> {
-            console.log("Server is runing " + process.env.port)
+        this.app.listen(process.env.PORT || 4000, ()=> {
+            console.log("Server is runing")
         });
     }
 

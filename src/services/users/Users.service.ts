@@ -1,11 +1,12 @@
-import {injectable, inject} from 'inversify';
 import 'reflect-metadata';
+import {injectable, inject} from 'inversify';
 import {UsersRepository} from '../../repository/users/Users.repository';
+import { User } from '../../models/user/user.model'
 import TYPES from '../../types/types';
 
 
 export interface UsersService {
-    getUsers():  Promise<Array<{name: string; surname: string}>>
+    getUsers():  Promise<User[]>
 }
 
 @injectable()
@@ -17,15 +18,15 @@ export class UsersServiceImp implements UsersService {
         this.UsersRepository = UsersRepository;
     }
 
-    public async getUsers(): Promise<Array<{name: string; surname: string}>> {
-        const response = await this.UsersRepository.findAll().then((users) => {
+    public async getUsers(): Promise<User[]> {
+
+        const users: User[] = await this.UsersRepository.findAll().then((users) => {
             return users
         }).catch((err) => {
             throw({type: "Users_Controler_ERR", value: err, statusCode: 400})
         })
 
-        return response
-        // return response
+        return users
     }
 
 }
