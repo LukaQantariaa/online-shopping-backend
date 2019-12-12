@@ -4,3 +4,9 @@ export interface IRegisterUser {
     password: string,
     is_active: boolean
 }
+
+export interface ILoginUser {
+    username: string,
+    password: string,
+    is_active: boolean
+}
