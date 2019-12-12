@@ -1,14 +1,14 @@
 import { Model, DataTypes } from 'sequelize'
 import { db } from '../../config/database'
 
-export class User extends Model { 
+export class Category extends Model { 
   public id!: number;
   public name!: string
   public is_active!: boolean
 
 }
 
-  User.init(
+  Category.init(
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -30,4 +30,4 @@ export class User extends Model {
     }
   );
 
-  User.sync({ force: false }).then(() => console.log('Category table created'));
+  Category.sync({ force: false }).then(() => console.log('Category table created'));

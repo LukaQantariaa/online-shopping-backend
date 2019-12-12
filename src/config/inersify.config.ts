@@ -13,10 +13,22 @@ import { UsersRepository, UsersRepositoryImp } from '../repository/users/Users.r
 // Products
 import { ProductsController } from '../controllers/products/Products.controller'
 
+// Categories
+import { CategoriesController } from '../controllers/categories/categories.controller'
+import { CategoriesService, CategoriesServiceImp } from '../services/categories/categories.service'
+import { CategoriesRepository, CategoriesRepositoryImp } from '../repository/categories/categories.repository'
+
 const container = new Container();
 container.bind<RegistrableController>(TYPES.Controller).to(UsersController);
-container.bind<RegistrableController>(TYPES.Controller).to(ProductsController);
 container.bind<UsersService>(TYPES.UsersService).to(UsersServiceImp);
 container.bind<UsersRepository>(TYPES.UsersRepository).to(UsersRepositoryImp);
+// - - -
+container.bind<RegistrableController>(TYPES.Controller).to(CategoriesController);
+container.bind<CategoriesService>(TYPES.CategoriesService).to(CategoriesServiceImp);
+container.bind<CategoriesRepository>(TYPES.CategoriesRepository).to(CategoriesRepositoryImp);
+// - - -
+container.bind<RegistrableController>(TYPES.Controller).to(ProductsController);
+
+
 
 export default container;

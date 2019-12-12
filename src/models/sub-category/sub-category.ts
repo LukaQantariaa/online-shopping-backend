@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize'
 import { db } from '../../config/database'
 
-export class User extends Model { 
+export class SubCategory extends Model { 
   public id!: number;
   public name!: string
   public category_id!: number
@@ -9,7 +9,7 @@ export class User extends Model {
 
 }
 
-  User.init(
+  SubCategory.init(
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -35,4 +35,4 @@ export class User extends Model {
     }
   );
 
-  User.sync({ force: false }).then(() => console.log('Sub-category table created'));
+  SubCategory.sync({ force: false }).then(() => console.log('Sub-category table created'));

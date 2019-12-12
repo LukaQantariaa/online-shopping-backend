@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize'
 import { db } from '../../config/database'
 
-export class User extends Model { 
+export class Product extends Model { 
   public id!: number;
   public subCategory_id!: number;
   public title!: string;
@@ -13,7 +13,7 @@ export class User extends Model {
 
 }
 
-  User.init(
+  Product.init(
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -55,4 +55,4 @@ export class User extends Model {
     }
   );
 
-  User.sync({ force: false }).then(() => console.log('product table created'));
+  Product.sync({ force: false }).then(() => console.log('product table created'));
