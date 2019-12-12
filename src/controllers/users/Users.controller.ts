@@ -20,7 +20,7 @@ export class UsersController implements RegistrableController {
 
     public register(app: express.Application): void {
         app.route('/users')
-        // GET all users
+            // GET all users
             .get(verifyToken, async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const users = await this.UsersService.getUsers().catch(err => {
@@ -31,7 +31,7 @@ export class UsersController implements RegistrableController {
                     next(err)
                 }
             })
-        // Register user
+            // Register user
             .post(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     // request params
@@ -126,6 +126,19 @@ export class UsersController implements RegistrableController {
                     // update
                     const updatedUser: string = await this.UsersService.updateUser(updateData, req.body.userId)
                     res.send(updatedUser)
+                } catch(err) {
+                    next(err)
+                }
+            })
+            // delete user
+            .delete( verifyToken ,async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    const id = parseInt(req.params.id)
+                    if( id !== req.body.userId ) {
+                        throw({type: "USER_CONTROLLER_ERROR", value: 'Access Denied!', statusCode: 400})
+                    }
+                    const deletedUser = await this.UsersService.deleteUser(req.body.userId)
+                    res.send(deletedUser)
                 } catch(err) {
                     next(err)
                 }

@@ -13,6 +13,7 @@ export interface UsersService {
     loginUser(user: ILoginUser): Promise<{token: string}>
     getUser(id: number): Promise<User> 
     updateUser(data: {}, id: number): Promise<string>
+    deleteUser(id: number): Promise<any>
 }
 
 @injectable()
@@ -109,7 +110,25 @@ export class UsersServiceImp implements UsersService {
             throw({type: "USER_SERVICE_ERROR", value: "update error", statusCode: 400})
         }
 
-       // return exists
+    }
+
+    public async deleteUser(id: number): Promise<any> {
+        // check if user exists in DB
+        const exists = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
+            return user
+        }).catch((err) => {
+            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+        })
+
+        // update
+        const deletedUser = await this.UsersRepository.deleteOne(id)
+        
+        if(deletedUser[0] === 1) {
+            return "User successfully deleted!"
+        } else {
+            throw({type: "USER_SERVICE_ERROR", value: "delete error", statusCode: 400})
+        }
+
     }
 
 }
