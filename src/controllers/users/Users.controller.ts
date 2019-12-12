@@ -6,6 +6,8 @@ import {UsersService} from '../../services/users/Users.service';
 import {RegistrableController} from '../Registerable.controller';
 import { userRegisterSchema, userLoginSchema } from '../../validators/user/user'
 
+import { verifyToken } from '../../shared/helpers/jwt/verifyToken'
+
 @injectable()
 export class UsersController implements RegistrableController {
     private UsersService: UsersService;
@@ -17,7 +19,7 @@ export class UsersController implements RegistrableController {
     public register(app: express.Application): void {
         app.route('/users')
         // GET all users
-            .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+            .get(verifyToken, async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const users = await this.UsersService.getUsers().catch(err => {
                         throw({type: "Users_Controller_ERROR", value: err, statusCode: 400})
@@ -52,7 +54,16 @@ export class UsersController implements RegistrableController {
                     next(err)
                 }
             })
+        // update user
+            .put(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+
+                } catch(err) {
+
+                }
+            });
         app.route('/users/login')
+        // Login user
             .post(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     // request params
@@ -72,6 +83,19 @@ export class UsersController implements RegistrableController {
                     //Login user
                     const token = await this.UsersService.loginUser(user);
                     res.send(token)
+                } catch(err) {
+                    next(err)
+                }
+            })
+        app.route('/users/:id')
+            .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    // take id
+                    const id: number = parseInt(req.params.id)
+
+                    // find by id
+                    const user = await this.UsersService.getUser(id)
+                    res.send(user)
                 } catch(err) {
                     next(err)
                 }
