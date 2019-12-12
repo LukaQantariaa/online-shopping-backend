@@ -1,13 +1,13 @@
 import {injectable} from 'inversify';
 
 import { User } from '../../models/user/user.model'
-import { ILoginUser } from '../../interfaces/user/user.interface'
+import { IRegisterUser } from '../../interfaces/user/user.interface'
 
 
 export interface UsersRepository {
     findAll(where?: {}): Promise<User[]>;
     findOne(where?: {}): Promise<User>;
-    createOne(user: ILoginUser): Promise<User>;
+    createOne(user: IRegisterUser): Promise<User>;
 }
 
 @injectable()
@@ -20,7 +20,7 @@ export class UsersRepositoryImp implements UsersRepository {
         return User.findOne({where: where});
     }
 
-    public createOne(user: ILoginUser): Promise<User> {
+    public createOne(user: IRegisterUser): Promise<User> {
         return User.create(user)
     }
 

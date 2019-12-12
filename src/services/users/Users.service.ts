@@ -62,7 +62,7 @@ export class UsersServiceImp implements UsersService {
     }
 
     public async loginUser(user: ILoginUser): Promise<{token: string}> {
-        // check if username & password is correct
+        // check if username & password is correct 
         const correct = await this.UsersRepository.findOne({username: user.username, password: user.password, is_active: true}).then((user) => {
             if(user === null) {
                 throw('Username or password is not correct')
