@@ -1,0 +1,58 @@
+import { Model, DataTypes } from 'sequelize'
+import { db } from '../../config/database'
+
+export class User extends Model { 
+  public id!: number;
+  public subCategory_id!: number;
+  public title!: string;
+  public description!: string;
+  public price!: number;
+  public image!: string;
+  public user_id!: number;
+  public is_active!: boolean
+
+}
+
+  User.init(
+    {
+      id: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        autoIncrement: true,
+        primaryKey: true
+      },
+      subCategory_id: {
+        type: new DataTypes.INTEGER,
+        allowNull: false
+      },
+      title: {
+        type: new DataTypes.STRING(128),
+        allowNull: false
+      },
+      description: {
+        type: new DataTypes.STRING(128),
+        allowNull: false
+      },
+      price: {
+        type: new DataTypes.INTEGER,
+        allowNull: false
+      },
+      image: {
+        type: new DataTypes.STRING(128),
+        allowNull: false
+      },
+      user_id: {
+        type: new DataTypes.INTEGER,
+        allowNull: false
+      },
+      is_active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+      },
+    },
+    {
+      tableName: "product",
+      sequelize: db
+    }
+  );
+
+  User.sync({ force: false }).then(() => console.log('product table created'));
