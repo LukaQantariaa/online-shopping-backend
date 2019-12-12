@@ -12,6 +12,7 @@ export interface UsersService {
     registerUser(user: IRegisterUser): Promise<User>;
     loginUser(user: ILoginUser): Promise<{token: string}>
     getUser(id: number): Promise<User> 
+    updateUser(data: {}, id: number): Promise<string>
 }
 
 @injectable()
@@ -89,6 +90,26 @@ export class UsersServiceImp implements UsersService {
         })
 
         return user;
+    }
+
+    public async updateUser(data: {}, id: number): Promise<string> {
+        // check if user exists in DB
+        const exists = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
+            return user
+        }).catch((err) => {
+            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+        })
+
+        // update
+        const updatedUser = await this.UsersRepository.updateOne(data, id)
+        
+        if(updatedUser[0] === 1) {
+            return "User successfully updated"
+        } else {
+            throw({type: "USER_SERVICE_ERROR", value: "update error", statusCode: 400})
+        }
+
+       // return exists
     }
 
 }

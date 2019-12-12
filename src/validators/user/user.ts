@@ -28,3 +28,11 @@ export const userLoginSchema = Joi.object({
     is_active: Joi.boolean()
         .required()
 })
+
+export const userUpdateSchema = Joi.object({
+    email: Joi.string()
+        .pattern(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/),
+    password: Joi.string()
+        .min(6)
+        .max(128)
+})

@@ -8,6 +8,7 @@ export interface UsersRepository {
     findAll(where?: {}): Promise<User[]>;
     findOne(where?: {}): Promise<User>;
     createOne(user: IRegisterUser): Promise<User>;
+    updateOne(data: {email?: string, password?: string}, id: number): Promise<any>;
 }
 
 @injectable()
@@ -22,6 +23,10 @@ export class UsersRepositoryImp implements UsersRepository {
 
     public createOne(user: IRegisterUser): Promise<User> {
         return User.create(user)
+    }
+
+    public updateOne(data: {email?: string, password?: string}, id: number): Promise<any> {
+        return User.update(data, {where: {id: id}})
     }
 
 }

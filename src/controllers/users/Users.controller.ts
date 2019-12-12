@@ -4,9 +4,11 @@ import {injectable, inject} from 'inversify';
 import TYPES from '../../types/types';
 import {UsersService} from '../../services/users/Users.service';
 import {RegistrableController} from '../Registerable.controller';
-import { userRegisterSchema, userLoginSchema } from '../../validators/user/user'
+import { userRegisterSchema, userLoginSchema, userUpdateSchema } from '../../validators/user/user'
 
 import { verifyToken } from '../../shared/helpers/jwt/verifyToken'
+
+import { User } from '../../models/user/user.model'
 
 @injectable()
 export class UsersController implements RegistrableController {
@@ -54,14 +56,7 @@ export class UsersController implements RegistrableController {
                     next(err)
                 }
             })
-        // update user
-            .put(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
-                try {
 
-                } catch(err) {
-
-                }
-            });
         app.route('/users/login')
         // Login user
             .post(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -87,6 +82,7 @@ export class UsersController implements RegistrableController {
                     next(err)
                 }
             })
+
         app.route('/users/:id')
             .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
@@ -100,6 +96,40 @@ export class UsersController implements RegistrableController {
                     next(err)
                 }
             })
+            // update user
+            .put( verifyToken ,async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    // take request params
+                    let updateData: any = {};
+                    const propertyes  = ['email', 'password'];
+                    propertyes.forEach((property: string) => {
+                        if( req.body[property] ) {
+                            updateData[property] = req.body[property]
+                        }
+                    });
+
+                    if(!updateData) {
+                        throw({type: "USER_CONTROLLER_ERROR", value: "data is empty", statusCode: 400})
+                    }
+
+                    // validate
+                    const validate = userUpdateSchema.validate(updateData)
+                    if(validate.error) {
+                        const err = validate.error.details[0].message; 
+                        throw({type: "USER_CONTROLLER_ERROR", value: err, statusCode: 400})
+                    }
+
+                    if(req.params.id != req.body.userId) {
+                        throw({type: "USER_CONTROLLER_ERROR", value: 'Access Denied!', statusCode: 400})
+                    }
+
+                    // update
+                    const updatedUser: string = await this.UsersService.updateUser(updateData, req.body.userId)
+                    res.send(updatedUser)
+                } catch(err) {
+                    next(err)
+                }
+            });
 
     }
 }

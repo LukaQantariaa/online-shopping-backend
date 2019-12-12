@@ -24,9 +24,6 @@ class App {
 
     config() {
         dotenv.config();
-        console.log(db)
-        console.log(process.env.DB_NAME)
-        console.log(typeof process.env.DB_NAME)
         this.app.use(morgan('dev'));
         this.app.use(bodyParser.urlencoded({ extended: false }))
         this.app.use(bodyParser.json())
