@@ -9,7 +9,8 @@ import TYPES from '../../types/types'
 
 export interface CategoriesService {
     getCategories():  Promise<Category[]>;
-    createCategory(category: ICategory): Promise<Category>
+    createCategory(category: ICategory): Promise<Category>;
+    deleteCategory(id: number): Promise<string>
 }
 
 @injectable()
@@ -48,6 +49,24 @@ export class CategoriesServiceImp implements CategoriesService {
         })
 
         return CreatedCategory
+    }
+
+    public async deleteCategory(id: number): Promise<string> {
+        // check if user exists in DB
+        const exists = await this.CategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
+            return c
+        }).catch((err) => {
+            throw({type: "CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+        })
+
+        // update
+        const deleteCategory = await this.CategoriesRepository.deleteOne(id)
+        
+        if(deleteCategory[0] === 1) {
+            return "Category successfully deleted!"
+        } else {
+            throw({type: "CATEGORY_SERVICE_ERROR", value: "delete error", statusCode: 400})
+        }
     }
 }
 

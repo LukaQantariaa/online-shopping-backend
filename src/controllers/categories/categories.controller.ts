@@ -51,6 +51,17 @@ export class CategoriesController implements RegistrableController {
                     next(err)
                 }
             })
+        app.route('/categories/:id')
+            // GET all categories
+            .delete(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    const id:number = parseInt(req.params.id)
+                    const deletedCategory = await this.CategoriesService.deleteCategory(id)
+                    res.send(deletedCategory)
+                } catch(err) {
+                    next(err)
+                }
+            })
     }
 
 }

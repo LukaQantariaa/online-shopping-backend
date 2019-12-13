@@ -8,6 +8,7 @@ export interface CategoriesRepository {
     findAll(where?: {}): Promise<Category[]>;
     findOne(where?: {}): Promise<any>;
     createOne(category: ICategory): Promise<Category>;
+    deleteOne(id: number): Promise<Array<any>>
 }
 
 @injectable()
@@ -23,5 +24,9 @@ export class CategoriesRepositoryImp implements CategoriesRepository {
 
     public async createOne(category: ICategory): Promise<Category> {
         return Category.create(category)
+    }
+
+    public deleteOne(id: number): Promise<Array<any>> {
+        return Category.update({is_active: false}, {where: {id: id}})
     }
 }

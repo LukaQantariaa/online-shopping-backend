@@ -30,7 +30,7 @@ export class UsersRepositoryImp implements UsersRepository {
         return User.update(data, {where: {id: id}})
     }
 
-    deleteOne(id: number): Promise<Array<any>> {
+    public deleteOne(id: number): Promise<Array<any>> {
         return User.update({is_active: false}, {where: {id: id}})
     }
 
