@@ -14,7 +14,7 @@ export interface CategoriesRepository {
 @injectable()
 export class CategoriesRepositoryImp implements CategoriesRepository {
 
-    public async findAll(where = {}): Promise<any> {
+    public async findAll(where = {}): Promise<Category[]> {
         return Category.findAll({where: where})
     }
 

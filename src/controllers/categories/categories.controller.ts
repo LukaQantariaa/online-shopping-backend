@@ -44,7 +44,7 @@ export class CategoriesController implements RegistrableController {
                         throw({type: "CATEGORY_CONTROLLER_ERROR", value: err, statusCode: 400})
                     }
 
-                    // register user
+                    // Create Category
                     const createdCategory = await this.CategoriesService.createCategory(request)
                     res.send(createdCategory)
                 } catch(err) {
