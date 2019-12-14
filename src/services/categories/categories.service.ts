@@ -33,7 +33,7 @@ export class CategoriesServiceImp implements CategoriesService {
     }
 
     public async createCategory(category: ICategory): Promise<Category> {
-        // Check if Category already exists with this username
+        // Check if Category already exists with this name
         const categoryName: any = await this.CategoriesRepository.findOne({ name: category.name }).then((categoryName) => {
             return categoryName
         });
@@ -41,7 +41,7 @@ export class CategoriesServiceImp implements CategoriesService {
             throw({type: "CATEGORY_SERVICE_ERROR", value: `name: ${category.name} already exists!`, statusCode: 400})
         }
 
-        // register User
+        // Create sub-category
         const CreatedCategory:Category = await this.CategoriesRepository.createOne(category).then((category: Category) => {
             return category
         }).catch((err) => {
@@ -52,7 +52,7 @@ export class CategoriesServiceImp implements CategoriesService {
     }
 
     public async deleteCategory(id: number): Promise<string> {
-        // check if user exists in DB
+        // check if Category exists in DB
         const exists = await this.CategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
             return c
         }).catch((err) => {

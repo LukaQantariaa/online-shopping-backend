@@ -4,7 +4,7 @@ import * as express from 'express';
 import {RegistrableController} from '../Registerable.controller';
 import { SubCategoriesService } from '../../services/sub-categories/sub-categories.service'
 import TYPES from '../../types/types'
-import { Category } from '../../validators/category/category'
+import { SubCategory } from '../../validators/sub-category/sub-category'
 
 @injectable()
 export class SubCategoriesController implements RegistrableController {
@@ -27,7 +27,31 @@ export class SubCategoriesController implements RegistrableController {
                 } catch(err) {
                     next(err)
                 }
-            });
+            })
+            // Create Sub-Category
+            .post(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    // request params
+                    const request = {
+                        name: req.body.name,
+                        category_id: req.body.categoryId,
+                        is_active: true
+                    }
+
+                    // validate
+                    const validate = SubCategory.validate(request)
+                    if(validate.error) {
+                        const err = validate.error.details[0].message; 
+                        throw({type: "SUB-CATEGORY_CONTROLLER_ERROR", value: err, statusCode: 400})
+                    }
+
+                    // Create Sub-Category
+                    const createdSubCategory = await this.SubCategoriesService.createSubCategory(request)
+                    res.send(createdSubCategory)
+                } catch(err) {
+                    next(err)
+                }
+            })
             
     }
 
