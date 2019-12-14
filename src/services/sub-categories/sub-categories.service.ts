@@ -5,12 +5,13 @@ import { SubCategoriesRepository } from '../../repository/sub-categories/sub-cat
 import { CategoriesRepository } from '../../repository/categories/categories.repository'
 import { SubCategory } from '../../models/sub-category/sub-category';
 import { Category } from '../../models/category/category.model'
+import { ISubCategory } from '../../interfaces/sub-category/sub-category.interface'
 import TYPES from '../../types/types'
 
 
 export interface SubCategoriesService {
     getSubCategories():  Promise<SubCategory[]>;
-    createSubCategory(Subcategory: any): Promise<SubCategory>;
+    createSubCategory(Subcategory: ISubCategory): Promise<SubCategory>;
 }
 
 @injectable()
@@ -34,9 +35,9 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         return SubCategories;
     }
 
-    public async createSubCategory(Subcategory: any): Promise<SubCategory> {
+    public async createSubCategory(Subcategory: ISubCategory): Promise<SubCategory> {
         // Check if Sub-Category already exists with this name
-        const SubcategoryName: any = await this.SubCategoriesRepository.findOne({ name: Subcategory.name }).then((name) => {
+        const SubcategoryName: SubCategory = await this.SubCategoriesRepository.findOne({ name: Subcategory.name }).then((name) => {
             return name
         });
         if(SubcategoryName) {
