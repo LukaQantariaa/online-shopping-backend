@@ -52,6 +52,17 @@ export class SubCategoriesController implements RegistrableController {
                     next(err)
                 }
             })
+        app.route('/subcategories/:id')
+            // GET all categories
+            .delete(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    const id:number = parseInt(req.params.id)
+                    const deletedSubCategory = await this.SubCategoriesService.deleteCategory(id)
+                    res.send(deletedSubCategory)
+                } catch(err) {
+                    next(err)
+                }
+            })
             
     }
 

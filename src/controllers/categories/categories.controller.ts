@@ -52,7 +52,7 @@ export class CategoriesController implements RegistrableController {
                 }
             })
         app.route('/categories/:id')
-            // GET all categories
+            // Delete Category
             .delete(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const id:number = parseInt(req.params.id)

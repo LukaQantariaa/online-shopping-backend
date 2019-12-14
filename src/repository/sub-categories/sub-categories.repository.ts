@@ -8,6 +8,7 @@ export interface SubCategoriesRepository {
     findAll(where?: {}): Promise<SubCategory[]>;
     findOne(where?: {}): Promise<any>;
     createOne(Subcategory: ISubCategory): Promise<SubCategory>;
+    deleteOne(id: number): Promise<Array<any>>
 }
 
 @injectable()
@@ -23,6 +24,10 @@ export class SubCategoriesRepositoryImp implements SubCategoriesRepository {
 
     public async createOne(Subcategory: ISubCategory): Promise<SubCategory> {
         return SubCategory.create(Subcategory)
+    }
+
+    public deleteOne(id: number): Promise<Array<any>> {
+        return SubCategory.update({is_active: false}, {where: {id: id}})
     }
 
     

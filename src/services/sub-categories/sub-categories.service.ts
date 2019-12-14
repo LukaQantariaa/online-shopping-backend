@@ -12,6 +12,7 @@ import TYPES from '../../types/types'
 export interface SubCategoriesService {
     getSubCategories():  Promise<SubCategory[]>;
     createSubCategory(Subcategory: ISubCategory): Promise<SubCategory>;
+    deleteCategory(id: number): Promise<string>;
 }
 
 @injectable()
@@ -60,6 +61,24 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         })
 
         return CreatedSubCategory
+    }
+
+    public async deleteCategory(id: number): Promise<string> {
+        // check if Sub-Category exists in DB
+        const exists = await this.SubCategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
+            return c
+        }).catch((err) => {
+            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+        })
+
+        // update
+        const deleteSubCategory = await this.SubCategoriesRepository.deleteOne(id)
+        
+        if(deleteSubCategory[0] === 1) {
+            return "SubCategory successfully deleted!"
+        } else {
+            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: "delete error", statusCode: 400})
+        }
     }
 
 }
