@@ -5,7 +5,7 @@ export const SubCategory = Joi.object({
         .min(3)
         .max(32)
         .required(),
-    category_id: Joi.number()
+    CategoryId: Joi.number()
         .required(),
     is_active: Joi.boolean()
         .required()

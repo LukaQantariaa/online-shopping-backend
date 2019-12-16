@@ -1,5 +1,5 @@
 export interface ISubCategory {
     name: string,
-    category_id: number,
+    CategoryId: number,
     is_active: boolean
 }

@@ -34,7 +34,7 @@ export class SubCategoriesController implements RegistrableController {
                     // request params
                     const request = {
                         name: req.body.name,
-                        category_id: req.body.categoryId,
+                        CategoryId: req.body.CategoryId,
                         is_active: true
                     }
 

@@ -1,6 +1,8 @@
 import { Model, DataTypes } from 'sequelize'
 import { db } from '../../config/database'
 
+import { SubCategory } from '../../models/sub-category/sub-category'
+
 export class Category extends Model { 
   public id!: number;
   public name!: string
@@ -29,5 +31,6 @@ export class Category extends Model {
       sequelize: db
     }
   );
+
 
   Category.sync({ force: false }).then(() => console.log('Category table created'));

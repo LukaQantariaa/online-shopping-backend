@@ -46,11 +46,11 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         }
 
         // Check if Category exists with this id.
-        const category: Category = await this.CategoriesRepository.findOne({id: Subcategory.category_id}).then((c) => {
+        const category: Category = await this.CategoriesRepository.findOne({id: Subcategory.CategoryId}).then((c) => {
             return c
         });
         if(!category) {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: `Not found Category where id= ${Subcategory.category_id}!`, statusCode: 400})
+            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: `Not found Category where id= ${Subcategory.CategoryId}!`, statusCode: 400})
         }
 
         // Create Sub-category

@@ -2,6 +2,7 @@ import {injectable} from 'inversify';
 
 import { SubCategory } from '../../models/sub-category/sub-category'
 import { ISubCategory } from '../../interfaces/sub-category/sub-category.interface'
+import { Category } from '../../models/category/category.model'
 
 
 export interface SubCategoriesRepository {
@@ -15,7 +16,7 @@ export interface SubCategoriesRepository {
 export class SubCategoriesRepositoryImp implements SubCategoriesRepository {
 
     public async findAll(where = {}): Promise<SubCategory[]> {
-        return SubCategory.findAll({where: where})
+        return SubCategory.findAll({where: where, include: [{model: Category}]})
     }
 
     public async findOne(where = {}): Promise<any> {
