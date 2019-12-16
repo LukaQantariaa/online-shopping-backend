@@ -1,15 +1,17 @@
 import { Model, DataTypes } from 'sequelize'
 import { db } from '../../config/database'
+import { User } from '../user/user.model';
+import { SubCategory } from '../sub-category/sub-category';
 
 export class Product extends Model { 
   public id!: number;
-  public subCategory_id!: number;
+  //public subCategory_id!: number;
   public title!: string;
   public description!: string;
   public price!: number;
   public location!: string;
   public image!: string;
-  public user_id!: number;
+  // public user_id!: number;
   public is_active!: boolean
 
 }
@@ -21,10 +23,10 @@ export class Product extends Model {
         autoIncrement: true,
         primaryKey: true
       },
-      subCategory_id: {
-        type: new DataTypes.INTEGER,
-        allowNull: false
-      },
+      // subCategory_id: {
+      //   type: new DataTypes.INTEGER,
+      //   allowNull: false
+      // },
       title: {
         type: new DataTypes.STRING(128),
         allowNull: false
@@ -45,10 +47,10 @@ export class Product extends Model {
         type: new DataTypes.STRING(128),
         allowNull: false
       },
-      user_id: {
-        type: new DataTypes.INTEGER,
-        allowNull: false
-      },
+      // user_id: {
+      //   type: new DataTypes.INTEGER,
+      //   allowNull: false
+      // },
       is_active: {
         type: DataTypes.BOOLEAN,
         allowNull: false
@@ -59,5 +61,11 @@ export class Product extends Model {
       sequelize: db
     }
   );
+
+  User.hasMany(Product)
+  Product.belongsTo(User)
+
+  SubCategory.hasMany(Product)
+  Product.belongsTo(SubCategory)
 
   Product.sync({ force: false }).then(() => console.log('product table created'));
