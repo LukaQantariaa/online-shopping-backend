@@ -2,6 +2,7 @@ import {injectable} from 'inversify';
 
 import { User } from '../../models/user/user.model'
 import { IRegisterUser } from '../../interfaces/user/user.interface'
+import { Product } from '../../models/product/product';
 
 
 export interface UsersRepository {
@@ -19,7 +20,7 @@ export class UsersRepositoryImp implements UsersRepository {
     }
 
     public findOne(where = {}): Promise<User> {
-        return User.findOne({where: where});
+        return User.findOne({where: where, include: [ {model: Product} ]});
     }
 
     public createOne(user: IRegisterUser): Promise<User> {

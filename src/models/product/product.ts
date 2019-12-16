@@ -32,7 +32,7 @@ export class Product extends Model {
         allowNull: false
       },
       description: {
-        type: new DataTypes.STRING(128),
+        type: new DataTypes.STRING(),
         allowNull: false
       },
       price: {
