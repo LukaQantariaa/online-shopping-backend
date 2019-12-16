@@ -7,6 +7,9 @@ const TYPES = {
     // Sub-Categories
     SubCategoriesService: Symbol("SubCategoriesService"),
     SubCategoriesRepository: Symbol('SubCategoriesRepository'),
+    // Products
+    ProductsRepository: Symbol('ProductsRepository'),
+    ProductsService: Symbol('ProductsService'),
     // Registable
     Controller: Symbol('Controller'),
 };

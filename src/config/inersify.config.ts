@@ -11,7 +11,9 @@ import { UsersService, UsersServiceImp } from '../services/users/Users.service'
 import { UsersRepository, UsersRepositoryImp } from '../repository/users/Users.repository'
 
 // Products
-import { ProductsController } from '../controllers/products/Products.controller'
+import { ProductsController } from '../controllers/products/Products.controller';
+import { ProductsService, ProductServiceImp } from '../services/products/products.service';
+import { ProductsRepository, ProductsRepositoryImp } from '../repository/products/products.repository'
 
 // Categories
 import { CategoriesController } from '../controllers/categories/categories.controller'
@@ -22,6 +24,7 @@ import { CategoriesRepository, CategoriesRepositoryImp } from '../repository/cat
 import { SubCategoriesController } from '../controllers/sub-categories/sub-categories.controller'
 import { SubCategoriesService, SubCategoriesServiceImp } from '../services/sub-categories/sub-categories.service'
 import { SubCategoriesRepository, SubCategoriesRepositoryImp } from '../repository/sub-categories/sub-categories.repository'
+
 
 const container = new Container();
 container.bind<RegistrableController>(TYPES.Controller).to(UsersController);
@@ -37,6 +40,8 @@ container.bind<SubCategoriesService>(TYPES.SubCategoriesService).to(SubCategorie
 container.bind<SubCategoriesRepository>(TYPES.SubCategoriesRepository).to(SubCategoriesRepositoryImp);
 // - - -
 container.bind<RegistrableController>(TYPES.Controller).to(ProductsController);
+container.bind<ProductsService>(TYPES.ProductsService).to(ProductServiceImp);
+container.bind<ProductsRepository>(TYPES.ProductsRepository).to(ProductsRepositoryImp);
 
 
 

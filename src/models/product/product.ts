@@ -7,6 +7,7 @@ export class Product extends Model {
   public title!: string;
   public description!: string;
   public price!: number;
+  public location!: string;
   public image!: string;
   public user_id!: number;
   public is_active!: boolean
@@ -35,6 +36,10 @@ export class Product extends Model {
       price: {
         type: new DataTypes.INTEGER,
         allowNull: false
+      },
+      location: {
+        type: new DataTypes.STRING(64),
+        allowNull: true
       },
       image: {
         type: new DataTypes.STRING(128),
