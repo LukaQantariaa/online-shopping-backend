@@ -13,6 +13,7 @@ export interface SubCategoriesService {
     getSubCategories():  Promise<SubCategory[]>;
     createSubCategory(Subcategory: ISubCategory): Promise<SubCategory>;
     deleteCategory(id: number): Promise<string>;
+    getSubCategory(id: number): Promise<SubCategory>;
 }
 
 @injectable()
@@ -79,6 +80,18 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         } else {
             throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: "delete error", statusCode: 400})
         }
+    }
+
+    public async getSubCategory(id: number): Promise<SubCategory> {
+        // check if Sub-Category exists in DB
+        const SubCategory: SubCategory = await this.SubCategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
+            return c
+        }).catch((err) => {
+            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+        })
+
+        return SubCategory
+
     }
 
 }

@@ -5,6 +5,7 @@ import {RegistrableController} from '../Registerable.controller';
 import { SubCategoriesService } from '../../services/sub-categories/sub-categories.service'
 import TYPES from '../../types/types'
 import { SubCategory } from '../../validators/sub-category/sub-category'
+import { ISubCategory } from '../../interfaces/sub-category/sub-category.interface'
 
 @injectable()
 export class SubCategoriesController implements RegistrableController {
@@ -63,6 +64,16 @@ export class SubCategoriesController implements RegistrableController {
                     next(err)
                 }
             })
+        app.route('/subcategories/:id')
+            .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    const id:number = parseInt(req.params.id)
+                    const Category: ISubCategory = await this.SubCategoriesService.getSubCategory(id)
+                    res.send(Category)
+                } catch(err) {
+                    next(err)
+            }
+        })
             
     }
 

@@ -21,7 +21,7 @@ export class SubCategoriesRepositoryImp implements SubCategoriesRepository {
     }
 
     public async findOne(where = {}): Promise<any> {
-        return SubCategory.findOne({where: where});
+        return SubCategory.findOne({where: where, include: [{model: Category},{model: Product}]});
     }
 
     public async createOne(Subcategory: ISubCategory): Promise<SubCategory> {
