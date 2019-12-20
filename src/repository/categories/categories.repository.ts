@@ -16,11 +16,11 @@ export interface CategoriesRepository {
 export class CategoriesRepositoryImp implements CategoriesRepository {
 
     public async findAll(where = {}): Promise<Category[]> {
-        return Category.findAll({where: where, include: [{model: SubCategory}]})
+        return Category.findAll({where: where, include: [{model: SubCategory, where: {is_active: true}}]})
     }
 
     public async findOne(where = {}): Promise<any> {
-        return Category.findOne({where: where});
+        return Category.findOne({where: where, include: [{model: SubCategory, where: {is_active: true}}]});
     }
 
     public async createOne(category: ICategory): Promise<Category> {

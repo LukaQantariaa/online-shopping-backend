@@ -84,11 +84,21 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
 
     public async getSubCategory(id: number): Promise<SubCategory> {
         // check if Sub-Category exists in DB
-        const SubCategory: SubCategory = await this.SubCategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
+        let SubCategory: SubCategory = await this.SubCategoriesRepository.findOneInc({is_active: true, id: id}).then((c) => {
             return c
         }).catch((err) => {
             throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
         })
+
+        if(SubCategory === null) {
+            SubCategory = await this.SubCategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
+                return c
+            }).catch((err) => {
+                throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            })
+        }
+
+        console.log(SubCategory)
 
         return SubCategory
 

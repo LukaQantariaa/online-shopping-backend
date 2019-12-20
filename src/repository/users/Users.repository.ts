@@ -7,6 +7,7 @@ import { Product } from '../../models/product/product';
 
 export interface UsersRepository {
     findAll(where?: {}): Promise<User[]>;
+    findOneInc(where?: {}): Promise<User>;
     findOne(where?: {}): Promise<User>;
     createOne(user: IRegisterUser): Promise<User>;
     updateOne(data: {email?: string, password?: string}, id: number): Promise<Array<any>>;
@@ -19,8 +20,12 @@ export class UsersRepositoryImp implements UsersRepository {
         return User.findAll({where: where});
     }
 
-    public findOne(where = {}): Promise<User> {
-        return User.findOne({where: where, include: [ {model: Product} ]});
+    public findOneInc(where = {}): Promise<User> {
+        return User.findOne({where: where, include: [{model: Product, where: {is_active: true}}]});
+    }
+
+    public findOne(where?: {}): Promise<User> {
+        return User.findOne({where: where});
     }
 
     public createOne(user: IRegisterUser): Promise<User> {

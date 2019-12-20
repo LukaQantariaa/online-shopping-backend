@@ -84,13 +84,23 @@ export class UsersServiceImp implements UsersService {
     }
 
     public async getUser(id: number): Promise<User> {
-        const user: User = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
+        let user: User = await this.UsersRepository.findOneInc({is_active: true, id: id}).then((user) => {
             return user
         }).catch((err) => {
             throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
-        })
+        });
 
-        return user;
+        // If user not found
+        if(user === null) { 
+            user = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
+                return user
+            }).catch((err) => {
+                throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            });
+        }
+        
+
+        return user
     }
 
     public async updateUser(data: {}, id: number): Promise<string> {
