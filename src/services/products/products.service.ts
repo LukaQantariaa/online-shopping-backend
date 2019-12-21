@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 import {injectable, inject} from 'inversify';
+import * as HttpStatus from "http-status-codes";
+
 import {ProductsRepository} from '../../repository/products/products.repository';
 import { Product } from '../../models/product/product'
 import TYPES from '../../types/types';
@@ -25,7 +27,7 @@ export class ProductServiceImp implements ProductsService {
         const Products: Product[] = await this.ProductsRepository.findAll().then((p) => {
             return p
         }).catch((err) => {
-            throw({type: "PRODUCTS_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return Products;

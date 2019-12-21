@@ -1,5 +1,6 @@
 import {injectable, inject} from 'inversify';
 import * as express from 'express';
+import * as HttpStatus from "http-status-codes";
 
 import {RegistrableController} from '../Registerable.controller';
 import { CategoriesService } from '../../services/categories/categories.service'
@@ -20,10 +21,8 @@ export class CategoriesController implements RegistrableController {
             // GET all categories
             .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
-                    const Categories = await this.CategoriesService.getCategories().catch(err => {
-                        throw({type: "Categories_Controller_ERROR", value: err, statusCode: 400})
-                    });
-                    res.send(Categories)
+                    const Categories = await this.CategoriesService.getCategories()
+                    res.json(Categories).send()
                 } catch(err) {
                     next(err)
                 }
@@ -41,12 +40,12 @@ export class CategoriesController implements RegistrableController {
                     const validate = Category.validate(request)
                     if(validate.error) {
                         const err = validate.error.details[0].message; 
-                        throw({type: "CATEGORY_CONTROLLER_ERROR", value: err, statusCode: 400})
+                        throw({value: err, statusCode: HttpStatus.BAD_REQUEST})
                     }
 
                     // Create Category
                     const createdCategory = await this.CategoriesService.createCategory(request)
-                    res.send(createdCategory)
+                    res.json(createdCategory).send()
                 } catch(err) {
                     next(err)
                 }
@@ -56,8 +55,15 @@ export class CategoriesController implements RegistrableController {
             .delete(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const id:number = parseInt(req.params.id)
+
+                    // Check params
+                    if(!id) {
+                        throw({value: "Invalid request params", statusCode: HttpStatus.BAD_REQUEST})
+                    }
+
+                    // Delete Category
                     const deletedCategory = await this.CategoriesService.deleteCategory(id)
-                    res.send(deletedCategory)
+                    res.json(deletedCategory).send()
                 } catch(err) {
                     next(err)
                 }

@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import {injectable, inject} from 'inversify';
+import * as HttpStatus from "http-status-codes";
 
 import { SubCategoriesRepository } from '../../repository/sub-categories/sub-categories.repository'
 import { CategoriesRepository } from '../../repository/categories/categories.repository'
@@ -12,7 +13,7 @@ import TYPES from '../../types/types'
 export interface SubCategoriesService {
     getSubCategories():  Promise<SubCategory[]>;
     createSubCategory(Subcategory: ISubCategory): Promise<SubCategory>;
-    deleteCategory(id: number): Promise<string>;
+    deleteSubCategory(id: number): Promise<string>;
     getSubCategory(id: number): Promise<SubCategory>;
 }
 
@@ -31,7 +32,7 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         const SubCategories: SubCategory[] = await this.SubCategoriesRepository.findAll().then((sub) => {
             return sub
         }).catch((err) => {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return SubCategories;
@@ -42,8 +43,9 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         const SubcategoryName: SubCategory = await this.SubCategoriesRepository.findOne({ name: Subcategory.name }).then((name) => {
             return name
         });
+        
         if(SubcategoryName) {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: `name: ${Subcategory.name} already exists!`, statusCode: 400})
+            throw({value: `Subcategory: ${Subcategory.name} already exists!`, statusCode: HttpStatus.BAD_REQUEST})
         }
 
         // Check if Category exists with this id.
@@ -51,26 +53,30 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
             return c
         });
         if(!category) {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: `Not found Category where id= ${Subcategory.CategoryId}!`, statusCode: 400})
+            throw({value: `Not found Category on id= ${Subcategory.CategoryId}!`, statusCode: HttpStatus.BAD_REQUEST})
         }
 
         // Create Sub-category
         const CreatedSubCategory:SubCategory = await this.SubCategoriesRepository.createOne(Subcategory).then((created: SubCategory) => {
             return created
         }).catch((err) => {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return CreatedSubCategory
     }
 
-    public async deleteCategory(id: number): Promise<string> {
+    public async deleteSubCategory(id: number): Promise<string> {
         // check if Sub-Category exists in DB
         const exists = await this.SubCategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
             return c
         }).catch((err) => {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
+
+        if(exists === null) {
+            throw({value: "Subcategory not found", statusCode: HttpStatus.NOT_FOUND})
+        }
 
         // update
         const deleteSubCategory = await this.SubCategoriesRepository.deleteOne(id)
@@ -78,7 +84,7 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         if(deleteSubCategory[0] === 1) {
             return "SubCategory successfully deleted!"
         } else {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: "delete error", statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         }
     }
 
@@ -87,18 +93,20 @@ export class SubCategoriesServiceImp implements SubCategoriesService {
         let SubCategory: SubCategory = await this.SubCategoriesRepository.findOneInc({is_active: true, id: id}).then((c) => {
             return c
         }).catch((err) => {
-            throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         if(SubCategory === null) {
             SubCategory = await this.SubCategoriesRepository.findOne({is_active: true, id: id}).then((c) => {
                 return c
             }).catch((err) => {
-                throw({type: "SUB-CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+                throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
             })
         }
 
-        console.log(SubCategory)
+        if(SubCategory === null) {
+            throw({value: "Subcategory not found", statusCode: HttpStatus.NOT_FOUND})
+        }
 
         return SubCategory
 

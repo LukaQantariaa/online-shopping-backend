@@ -1,5 +1,6 @@
 import {injectable, inject} from 'inversify';
 import * as express from 'express';
+import * as HttpStatus from "http-status-codes";
 
 import {RegistrableController} from '../Registerable.controller';
 import { SubCategoriesService } from '../../services/sub-categories/sub-categories.service'
@@ -21,10 +22,8 @@ export class SubCategoriesController implements RegistrableController {
             // GET all sub-categories
             .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
-                    const SubCategories = await this.SubCategoriesService.getSubCategories().catch(err => {
-                        throw({type: "Sub-Categories_Controller_ERROR", value: err, statusCode: 400})
-                    });
-                    res.send(SubCategories)
+                    const SubCategories = await this.SubCategoriesService.getSubCategories()
+                    res.json(SubCategories).send()
                 } catch(err) {
                     next(err)
                 }
@@ -43,12 +42,12 @@ export class SubCategoriesController implements RegistrableController {
                     const validate = SubCategory.validate(request)
                     if(validate.error) {
                         const err = validate.error.details[0].message; 
-                        throw({type: "SUB-CATEGORY_CONTROLLER_ERROR", value: err, statusCode: 400})
+                        throw({value: err, statusCode: HttpStatus.BAD_REQUEST})
                     }
 
                     // Create Sub-Category
                     const createdSubCategory = await this.SubCategoriesService.createSubCategory(request)
-                    res.send(createdSubCategory)
+                    res.json(createdSubCategory).send()
                 } catch(err) {
                     next(err)
                 }
@@ -58,8 +57,15 @@ export class SubCategoriesController implements RegistrableController {
             .delete(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const id:number = parseInt(req.params.id)
-                    const deletedSubCategory = await this.SubCategoriesService.deleteCategory(id)
-                    res.send(deletedSubCategory)
+                    
+                    // Check params
+                    if(!id) {
+                        throw({value: "Invalid request params", statusCode: HttpStatus.BAD_REQUEST})
+                    }
+
+                    // Delete subcategory
+                    const deletedSubCategory = await this.SubCategoriesService.deleteSubCategory(id)
+                    res.json(deletedSubCategory).send()
                 } catch(err) {
                     next(err)
                 }
@@ -68,8 +74,15 @@ export class SubCategoriesController implements RegistrableController {
             .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const id:number = parseInt(req.params.id)
+
+                    // Check params
+                    if(!id) {
+                        throw({value: "Invalid request params", statusCode: HttpStatus.BAD_REQUEST})
+                    }
+
+                    // Get subcategory
                     const Category: ISubCategory = await this.SubCategoriesService.getSubCategory(id)
-                    res.send(Category)
+                    res.json(Category).send()
                 } catch(err) {
                     next(err)
             }

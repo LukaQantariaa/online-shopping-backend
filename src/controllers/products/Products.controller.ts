@@ -19,9 +19,7 @@ export class ProductsController implements RegistrableController {
         app.route('/products')
             .get(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
-                    const Products = await this.ProductsService.getProducts().catch(err => {
-                        throw({type: "PRODUCTS_Controller_ERROR", value: err, statusCode: 400})
-                    });
+                    const Products = await this.ProductsService.getProducts()
                     res.send(Products)
                 } catch(err) {
                     next(err)

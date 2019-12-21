@@ -12,7 +12,7 @@ export async function verifyToken(req:Request, res: Response, next: NextFunction
     if( req.header('access-token') ) {
         var token: any = req.header('access-token');
     } else {
-        res.status(404).send("token does not exist");
+        res.status(401).json({value: "Unauthorized", statusCode: 401, status: "error"}).send();
         return 0
     }
 
@@ -23,6 +23,7 @@ export async function verifyToken(req:Request, res: Response, next: NextFunction
         req.body.userId = verifiedToken.id
         next()
     } catch(err) {
-        res.status(400).send("Invalid Token");
+        //Invalid token
+        res.status(401).json({value: "Unauthorized", statusCode: 401, status: "error"}).send();
     }
 }

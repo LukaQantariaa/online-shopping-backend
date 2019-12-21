@@ -1,5 +1,6 @@
 import * as express from 'express';
 import {injectable, inject} from 'inversify';
+import * as HttpStatus from "http-status-codes";
 
 import TYPES from '../../types/types';
 import {UsersService} from '../../services/users/Users.service';
@@ -23,10 +24,8 @@ export class UsersController implements RegistrableController {
             // GET all users
             .get(verifyToken, async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
-                    const users = await this.UsersService.getUsers().catch(err => {
-                        throw({type: "Users_Controller_ERROR", value: err, statusCode: 400})
-                    });
-                    res.send(users)
+                    const users = await this.UsersService.getUsers()
+                    res.json(users).send()
                 } catch(err) {
                     next(err)
                 }
@@ -46,12 +45,12 @@ export class UsersController implements RegistrableController {
                     const validate = userRegisterSchema.validate(user)
                     if(validate.error) {
                         const err = validate.error.details[0].message; 
-                        throw({type: "USER_CONTROLLER_ERROR", value: err, statusCode: 400})
+                        throw({value: err, statusCode: HttpStatus.BAD_REQUEST})
                     }
 
                     // register user
                     const registerUser = await this.UsersService.registerUser(user)
-                    res.send(registerUser)
+                    res.json(registerUser).send()
                 } catch(err) {
                     next(err)
                 }
@@ -72,12 +71,12 @@ export class UsersController implements RegistrableController {
                     const validate = userLoginSchema.validate(user)
                     if(validate.error) {
                         const err = validate.error.details[0].message; 
-                        throw({type: "USER_CONTROLLER_ERROR", value: err, statusCode: 400})
+                        throw({value: err, statusCode: HttpStatus.BAD_REQUEST})
                     }
 
                     //Login user
                     const token = await this.UsersService.loginUser(user);
-                    res.send(token)
+                    res.json(token).send()
                 } catch(err) {
                     next(err)
                 }
@@ -89,9 +88,14 @@ export class UsersController implements RegistrableController {
                     // take id
                     const id: number = parseInt(req.params.id)
 
+                    // Check params
+                    if(!id) {
+                        throw({value: "Invalid request params", statusCode: HttpStatus.BAD_REQUEST})
+                    }
+
                     // find by id
                     const user = await this.UsersService.getUser(id)
-                    res.send(user)
+                    res.json(user).send()
                 } catch(err) {
                     next(err)
                 }
@@ -99,6 +103,9 @@ export class UsersController implements RegistrableController {
             // update user
             .put( verifyToken ,async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
+
+                    const id: number = parseInt(req.params.id)
+
                     // take request params
                     let updateData: any = {};
                     const propertyes  = ['email', 'password'];
@@ -109,23 +116,29 @@ export class UsersController implements RegistrableController {
                     });
 
                     if(!updateData) {
-                        throw({type: "USER_CONTROLLER_ERROR", value: "data is empty", statusCode: 400})
+                        throw({value: "data is empty", statusCode: HttpStatus.BAD_REQUEST})
                     }
 
                     // validate
                     const validate = userUpdateSchema.validate(updateData)
                     if(validate.error) {
                         const err = validate.error.details[0].message; 
-                        throw({type: "USER_CONTROLLER_ERROR", value: err, statusCode: 400})
+                        throw({value: err, statusCode: HttpStatus.BAD_REQUEST})
                     }
 
+                    // Check params
+                    if(!id) {
+                        throw({value: "Invalid request params", statusCode: HttpStatus.BAD_REQUEST})
+                    }
+
+                    // Check if this token has access to this user
                     if(req.params.id != req.body.userId) {
-                        throw({type: "USER_CONTROLLER_ERROR", value: 'Access Denied!', statusCode: 400})
+                        throw({ value: 'Access Denied!', statusCode: HttpStatus.BAD_REQUEST})
                     }
 
-                    // update
+                    // Update
                     const updatedUser: string = await this.UsersService.updateUser(updateData, req.body.userId)
-                    res.send(updatedUser)
+                    res.json(updatedUser).send()
                 } catch(err) {
                     next(err)
                 }
@@ -134,11 +147,20 @@ export class UsersController implements RegistrableController {
             .delete( verifyToken ,async(req: express.Request, res: express.Response, next: express.NextFunction) => {
                 try {
                     const id = parseInt(req.params.id)
-                    if( id !== req.body.userId ) {
-                        throw({type: "USER_CONTROLLER_ERROR", value: 'Access Denied!', statusCode: 400})
+
+                    // Check params
+                    if(!id) {
+                        throw({value: "Invalid request params", statusCode: HttpStatus.BAD_REQUEST})
                     }
+
+                    // Check if this token has access to this user
+                    if( id !== req.body.userId ) {
+                        throw({ value: 'Access Denied!', statusCode: HttpStatus.BAD_REQUEST})
+                    }
+
+                    // Delete
                     const deletedUser = await this.UsersService.deleteUser(req.body.userId)
-                    res.send(deletedUser)
+                    res.json(deletedUser).send()
                 } catch(err) {
                     next(err)
                 }

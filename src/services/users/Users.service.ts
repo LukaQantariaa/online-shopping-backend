@@ -1,5 +1,7 @@
 import 'reflect-metadata';
 import {injectable, inject} from 'inversify';
+import * as HttpStatus from "http-status-codes";
+
 import {UsersRepository} from '../../repository/users/Users.repository';
 import { User } from '../../models/user/user.model'
 import TYPES from '../../types/types';
@@ -30,7 +32,7 @@ export class UsersServiceImp implements UsersService {
         const users: User[] = await this.UsersRepository.findAll().then((users) => {
             return users
         }).catch((err) => {
-            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return users;
@@ -43,7 +45,7 @@ export class UsersServiceImp implements UsersService {
             return user
         });
         if(username) {
-            throw({type: "USER_SERVICE_ERROR", value: `username: ${user.username} already exists!`, statusCode: 400})
+            throw({value: `username: ${user.username} already exists!`, statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         }
 
         // Check if user already exists with this email
@@ -51,14 +53,14 @@ export class UsersServiceImp implements UsersService {
             return user
         });
         if(email) {
-            throw({type: "USER_SERVICE_ERROR", value: `email: ${user.email} already exists!`, statusCode: 400})
+            throw({ value: `email: ${user.email} already exists!`, statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         }
 
         // register User
         const registerUser:User = await this.UsersRepository.createOne(user).then((user: User) => {
             return user
         }).catch((err) => {
-            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return registerUser
@@ -68,10 +70,10 @@ export class UsersServiceImp implements UsersService {
         // check if username & password is correct 
         const correct = await this.UsersRepository.findOne({username: user.username, password: user.password, is_active: true}).then((user) => {
             if(user === null) {
-                throw('Username or password is not correct')
+                throw({ value: "Username or Password isn't correct", statusCode: HttpStatus.BAD_REQUEST})
             } else { return user }
         }).catch((err) => {
-            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         console.log(correct)
@@ -87,7 +89,7 @@ export class UsersServiceImp implements UsersService {
         let user: User = await this.UsersRepository.findOneInc({is_active: true, id: id}).then((user) => {
             return user
         }).catch((err) => {
-            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         });
 
         // If user not found
@@ -95,10 +97,13 @@ export class UsersServiceImp implements UsersService {
             user = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
                 return user
             }).catch((err) => {
-                throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+                throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
             });
         }
         
+        if(user === null) {
+            throw({value: "User not found", statusCode: HttpStatus.NOT_FOUND})
+        }
 
         return user
     }
@@ -108,8 +113,12 @@ export class UsersServiceImp implements UsersService {
         const exists = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
             return user
         }).catch((err) => {
-            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
+
+        if(exists === null) {
+            throw({value: "User not found", statusCode: HttpStatus.NOT_FOUND})
+        }
 
         // update
         const updatedUser = await this.UsersRepository.updateOne(data, id)
@@ -117,7 +126,7 @@ export class UsersServiceImp implements UsersService {
         if(updatedUser[0] === 1) {
             return "User successfully updated"
         } else {
-            throw({type: "USER_SERVICE_ERROR", value: "update error", statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         }
 
     }
@@ -127,8 +136,12 @@ export class UsersServiceImp implements UsersService {
         const exists = await this.UsersRepository.findOne({is_active: true, id: id}).then((user) => {
             return user
         }).catch((err) => {
-            throw({type: "USER_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
+
+        if(exists === null) {
+            throw({value: "User not found", statusCode: HttpStatus.NOT_FOUND})
+        }
 
         // update
         const deletedUser = await this.UsersRepository.deleteOne(id)
@@ -136,7 +149,7 @@ export class UsersServiceImp implements UsersService {
         if(deletedUser[0] === 1) {
             return "User successfully deleted!"
         } else {
-            throw({type: "USER_SERVICE_ERROR", value: "delete error", statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         }
 
     }

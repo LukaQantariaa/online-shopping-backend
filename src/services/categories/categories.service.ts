@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import {injectable, inject} from 'inversify';
+import * as HttpStatus from "http-status-codes";
 
 import { CategoriesRepository } from '../../repository/categories/categories.repository'
 import { Category } from '../../models/category/category.model'
@@ -26,7 +27,7 @@ export class CategoriesServiceImp implements CategoriesService {
         const Categories: Category[] = await this.CategoriesRepository.findAll().then((Categories) => {
             return Categories
         }).catch((err) => {
-            throw({type: "CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return Categories;
@@ -38,14 +39,14 @@ export class CategoriesServiceImp implements CategoriesService {
             return categoryName
         });
         if(categoryName) {
-            throw({type: "CATEGORY_SERVICE_ERROR", value: `name: ${category.name} already exists!`, statusCode: 400})
+            throw({value: `name: ${category.name} already exists!`, statusCode: HttpStatus.BAD_REQUEST})
         }
 
         // Create sub-category
         const CreatedCategory:Category = await this.CategoriesRepository.createOne(category).then((category: Category) => {
             return category
         }).catch((err) => {
-            throw({type: "CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         })
 
         return CreatedCategory
@@ -59,13 +60,17 @@ export class CategoriesServiceImp implements CategoriesService {
             throw({type: "CATEGORY_SERVICE_ERROR", value: err, statusCode: 400})
         })
 
+        if(exists === null) {
+            throw({value: "Category not found", statusCode: HttpStatus.NOT_FOUND})
+        }
+
         // update
         const deleteCategory = await this.CategoriesRepository.deleteOne(id)
         
         if(deleteCategory[0] === 1) {
             return "Category successfully deleted!"
         } else {
-            throw({type: "CATEGORY_SERVICE_ERROR", value: "delete error", statusCode: 400})
+            throw({value: "Database Error", statusCode: HttpStatus.INTERNAL_SERVER_ERROR})
         }
     }
 }
