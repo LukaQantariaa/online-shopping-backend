@@ -25,6 +25,15 @@ export class ProductsController implements RegistrableController {
                     next(err)
                 }
             })
+            // Create Product
+            .post(async(req: express.Request, res: express.Response, next: express.NextFunction) => {
+                try {
+                    
+                } catch(err) {
+                    next(err)
+                }
+            })
+            
     }
 
 }
