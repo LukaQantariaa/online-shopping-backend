@@ -25,6 +25,9 @@ import { SubCategoriesController } from '../controllers/sub-categories/sub-categ
 import { SubCategoriesService, SubCategoriesServiceImp } from '../services/sub-categories/sub-categories.service'
 import { SubCategoriesRepository, SubCategoriesRepositoryImp } from '../repository/sub-categories/sub-categories.repository'
 
+//Files
+import { Files, FilesImp } from '../shared/helpers/files/files'
+
 
 const container = new Container();
 container.bind<RegistrableController>(TYPES.Controller).to(UsersController);
@@ -42,6 +45,9 @@ container.bind<SubCategoriesRepository>(TYPES.SubCategoriesRepository).to(SubCat
 container.bind<RegistrableController>(TYPES.Controller).to(ProductsController);
 container.bind<ProductsService>(TYPES.ProductsService).to(ProductServiceImp);
 container.bind<ProductsRepository>(TYPES.ProductsRepository).to(ProductsRepositoryImp);
+// - - -
+container.bind<Files>(TYPES.Files).to(FilesImp);
+
 
 
 

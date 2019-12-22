@@ -10,6 +10,8 @@ const TYPES = {
     // Products
     ProductsRepository: Symbol('ProductsRepository'),
     ProductsService: Symbol('ProductsService'),
+    // Files
+    Files: Symbol('Files'),
     // Registable
     Controller: Symbol('Controller'),
 };
